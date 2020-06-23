@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 
 import '../widgets/auth/auth_form.dart';
 
 class AuthScreen extends StatelessWidget {
   final _auth = FirebaseAuth.instance;
-  Future<void> _submitForm(String email, String username, String password,
+  Future<bool> _submitForm(String email, String username, String password,
       authMode mode, BuildContext ctx) async {
     AuthResult authResult;
     try {
@@ -16,7 +17,15 @@ class AuthScreen extends StatelessWidget {
       } else {
         authResult = await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
+        await Firestore()
+            .collection('users')
+            .document(authResult.user.uid)
+            .setData({
+          'username': username,
+          'email': email,
+        });
       }
+      return true;
     } on PlatformException catch (error) {
       var message = 'Something went wrong while trying to log you in.';
       if (error != null) {
@@ -28,6 +37,7 @@ class AuthScreen extends StatelessWidget {
           behavior: SnackBarBehavior.floating,
         ),
       );
+      return false;
     } catch (error) {
       Scaffold.of(ctx).showSnackBar(
         SnackBar(
@@ -35,6 +45,7 @@ class AuthScreen extends StatelessWidget {
           behavior: SnackBarBehavior.floating,
         ),
       );
+      return false;
     }
   }
 

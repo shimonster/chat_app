@@ -6,7 +6,7 @@ enum authMode {
 }
 
 class AuthForm extends StatefulWidget {
-  final void Function(String email, String username, String password,
+  final Future<bool> Function(String email, String username, String password,
       authMode mode, BuildContext ctx) submitData;
 
   AuthForm(this.submitData);
@@ -23,12 +23,24 @@ class _AuthFormState extends State<AuthForm> {
   final _usernameController = TextEditingController();
   var _inputs = {'email': '', 'username': '', 'password': ''};
   var _authMode = authMode.login;
+  var _isLoading = false;
 
   void _submit(String email, String username, String password) {
     if (_formKey.currentState.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
       _formKey.currentState.save();
-      widget.submitData(_inputs['email'], _inputs['username'],
-          _inputs['password'], _authMode, context);
+      widget
+          .submitData(_inputs['email'].trim(), _inputs['username'].trim(),
+              _inputs['password'].trim(), _authMode, context)
+          .then((suc) {
+        if (!suc) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      });
       FocusScope.of(context).unfocus();
       print(_inputs);
     }
@@ -172,14 +184,17 @@ class _AuthFormState extends State<AuthForm> {
                   SizedBox(
                     height: 13,
                   ),
-                  RaisedButton(
-                    child:
-                        Text(_authMode == authMode.signUp ? 'Signup' : 'Login'),
-                    onPressed: () {
-                      _submit(_inputs['email'], _inputs['username'],
-                          _inputs['password']);
-                    },
-                  ),
+                  _isLoading
+                      ? CircularProgressIndicator()
+                      : RaisedButton(
+                          child: Text(_authMode == authMode.signUp
+                              ? 'Signup'
+                              : 'Login'),
+                          onPressed: () {
+                            _submit(_inputs['email'], _inputs['username'],
+                                _inputs['password']);
+                          },
+                        ),
                   FlatButton(
                     textColor: Theme.of(context).accentColor,
                     child: Text(_authMode == authMode.signUp

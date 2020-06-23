@@ -1,35 +1,64 @@
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+import '../widgets/chat/new_message.dart';
+import '../widgets/chat/messages.dart';
 
 class ChatScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: StreamBuilder(
-        stream: Firestore()
-            .collection('chats/yoD62921qQ80MpQKHFmH/messages')
-            .snapshots(),
-        builder: (ctx, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          final documents = snapshot.data.documents;
-          return ListView.builder(
-            itemCount: snapshot.data.documents.length,
-            itemBuilder: (ctx, i) => Text(documents[i]['text']),
-          );
-        },
+      appBar: AppBar(
+        title: Text('Chat'),
+        actions: <Widget>[
+          DropdownButton(
+            onChanged: (_) {
+              FirebaseAuth.instance.signOut();
+            },
+            icon: Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: Icon(
+                Icons.more_vert,
+                color: Colors.white,
+              ),
+            ),
+            items: [
+              DropdownMenuItem(
+                value: 'Logout',
+                child: Container(
+                  child: Row(
+                    children: <Widget>[
+                      Icon(Icons.exit_to_app),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text('Logout')
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () {
-          Firestore()
-              .collection('chats/yoD62921qQ80MpQKHFmH/messages')
-              .add({'text': 'this is a new message'});
-        },
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            child: Messages(),
+          ),
+          NewMessage(),
+        ],
       ),
+//      floatingActionButton: FloatingActionButton(
+//        child: Icon(Icons.add),
+//        onPressed: () {
+//          Firestore()
+//              .collection('chat')
+//              .document()
+//              .setData({'text': 'This is a message!'});
+//        },
+//      ),
     );
   }
 }
