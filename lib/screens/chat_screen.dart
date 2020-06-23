@@ -9,6 +9,7 @@ class ChatScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[300],
       appBar: AppBar(
         title: Text('Chat'),
         actions: <Widget>[
@@ -50,15 +51,6 @@ class ChatScreen extends StatelessWidget {
           NewMessage(),
         ],
       ),
-//      floatingActionButton: FloatingActionButton(
-//        child: Icon(Icons.add),
-//        onPressed: () {
-//          Firestore()
-//              .collection('chat')
-//              .document()
-//              .setData({'text': 'This is a message!'});
-//        },
-//      ),
     );
   }
 }
