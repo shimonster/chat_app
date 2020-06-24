@@ -9,8 +9,8 @@ class Messages extends StatelessWidget {
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: FirebaseAuth.instance.currentUser(),
-      builder: (ctx, futureSnapshot) {
-        if (futureSnapshot.connectionState == ConnectionState.waiting) {
+      builder: (ctx, userSnapshot) {
+        if (userSnapshot.connectionState == ConnectionState.waiting) {
           return Center(
             child: CircularProgressIndicator(),
           );
@@ -33,7 +33,9 @@ class Messages extends StatelessWidget {
                 final docs = snapshot.data.documents;
                 return MessageBubble(
                   docs[i]['text'],
-                  futureSnapshot.data.uid == docs[i]['uid'],
+                  docs[i]['username'],
+                  docs[i]['uid'],
+                  userSnapshot.data.uid == docs[i]['uid'],
                   ValueKey(docs[i].documentID),
                 );
               },

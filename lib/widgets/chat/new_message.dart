@@ -29,9 +29,7 @@ class _NewMessageState extends State<NewMessage> {
                 ),
               ),
               onChanged: (value) {
-                if (value.length == 0 || value.length == 1) {
-                  setState(() {});
-                }
+                setState(() {});
               },
             ),
           ),
@@ -43,10 +41,13 @@ class _NewMessageState extends State<NewMessage> {
                 : () async {
                     try {
                       final user = await FirebaseAuth.instance.currentUser();
+                      final userN =
+                          await Firestore().document('users/${user.uid}').get();
                       await Firestore().collection('chat').add({
                         'text': _messageController.text,
                         'timeStamp': Timestamp.now(),
-                        'uid': user.uid
+                        'uid': user.uid,
+                        'username': userN['username'],
                       });
                       _messageController.clear();
                     } catch (error) {
