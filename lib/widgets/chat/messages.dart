@@ -35,6 +35,7 @@ class Messages extends StatelessWidget {
                   docs[i]['text'],
                   docs[i]['username'],
                   docs[i]['uid'],
+                  docs[i]['url'],
                   userSnapshot.data.uid == docs[i]['uid'],
                   ValueKey(docs[i].documentID),
                 );

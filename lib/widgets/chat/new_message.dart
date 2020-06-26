@@ -41,13 +41,14 @@ class _NewMessageState extends State<NewMessage> {
                 : () async {
                     try {
                       final user = await FirebaseAuth.instance.currentUser();
-                      final userN =
+                      final userD =
                           await Firestore().document('users/${user.uid}').get();
                       await Firestore().collection('chat').add({
                         'text': _messageController.text,
                         'timeStamp': Timestamp.now(),
                         'uid': user.uid,
-                        'username': userN['username'],
+                        'username': userD['username'],
+                        'url': userD['url'],
                       });
                       _messageController.clear();
                     } catch (error) {

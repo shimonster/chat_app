@@ -6,11 +6,12 @@ class MessageBubble extends StatelessWidget {
   final String message;
   final String username;
   final String uid;
+  final String url;
   final bool isMe;
   final Key key;
 
   const MessageBubble(
-      this.message, this.username, this.uid, this.isMe, this.key)
+      this.message, this.username, this.uid, this.url, this.isMe, this.key)
       : super(key: key);
 
   @override
@@ -58,17 +59,10 @@ class MessageBubble extends StatelessWidget {
               top: -10,
               left: !isMe ? 3 : null,
               right: isMe ? 3 : null,
-              child: FutureBuilder(
-                future: Firestore.instance.document('users/$uid').get(),
-                builder: (ctx, snapshot) =>
-                    snapshot.connectionState == ConnectionState.waiting
-                        ? CircleAvatar()
-                        : CircleAvatar(
-                            backgroundImage: NetworkImage(
-                              snapshot.data['url'] ??
-                                  'https://lh3.googleusercontent.com/proxy/GnQJWh446SEH8UCx3X230tslq6LvZUjPvVjjN0ygrClPdN1RLbfI6IxAsfB4Zg5ER6KNpll5VPS5gVeJppJfvC5pxVPR1fL5BjqwPJatLgdU5XYRr2xPZ6Yy1L3SqM8dLpvhtmVlhke2dno7aTPMcFDmQWvHHkByT-If35ItYl_tFVXznE7VSWQFx7UD9m0',
-                            ),
-                          ),
+              child: CircleAvatar(
+                backgroundImage: NetworkImage(
+                  url,
+                ),
               ),
             ),
           ],
